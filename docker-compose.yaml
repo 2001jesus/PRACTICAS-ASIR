@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  drupal:
+    image: drupal:9.4.8-php8.1-apache
+    restart: always
+    ports:
+      - "8080:80"
+      - "8043:443"
+    environment:
+      DRUPAL_DATABASE_HOST: mariadb
+      DRUPAL_DATABASE_PORT: 3306
+      DRUPAL_DATABASE_NAME: drupal
+      DRUPAL_DATABASE_USER: drupal
+      DRUPAL_DATABASE_PASSWORD: drupal
+    volumes:
+      - drupal-data:/var/www/html
+    networks:
+      - network
+
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:x
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - network
+
+volumes:
+  drupal-data:
+  mariadb-data:
+
+networks:
+  network:
+    driver: bridge
