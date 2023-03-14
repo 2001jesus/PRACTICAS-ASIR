@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   drupal:
@@ -6,7 +6,7 @@ services:
     restart: always
     ports:
       - "8080:80"
-      - "8443:443"
+      - "8043:443"
     environment:
       DRUPAL_DATABASE_HOST: mariadb
       DRUPAL_DATABASE_PORT: 3306
@@ -16,8 +16,7 @@ services:
     volumes:
       - drupal-data:/var/www/html
     networks:
-      - drupal-network
-      - mariadb-network
+      - network
 
   mariadb:
     image: mariadb
@@ -30,14 +29,22 @@ services:
     volumes:
       - mariadb-data:/var/lib/mysql
     networks:
-      - mariadb-network
+      - network
+
+  haproxy:
+    image: haproxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      - network
 
 volumes:
   drupal-data:
   mariadb-data:
 
 networks:
-  drupal-network:
-    driver: bridge
-  mariadb-network:
+  network:
     driver: bridge
