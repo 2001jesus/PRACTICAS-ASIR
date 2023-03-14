@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   drupal:
-    image: drupal:9.4.8-php8.1-apache
+    image: drupal
     restart: always
     ports:
       - "8080:80"
@@ -21,13 +21,23 @@ services:
   mariadb:
     image: mariadb
     restart: always
-    environment:x
+    environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: drupal
       MYSQL_USER: drupal
       MYSQL_PASSWORD: drupal
     volumes:
       - mariadb-data:/var/lib/mysql
+    networks:
+      - network
+
+  haproxy:
+    image: haproxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     networks:
       - network
 
